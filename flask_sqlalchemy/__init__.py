@@ -427,7 +427,7 @@ class BaseQuery(orm.Query):
             abort(404)
         return rv
 
-    def paginate(self, page=None, per_page=None, error_out=True):
+    def paginate(self, page=None, per_page=None, error_out=True, total=None):
         """Returns ``per_page`` items from page ``page``.
 
         If no items are found and ``page`` is greater than 1, or if page is less than 1, it aborts with 404.
@@ -478,7 +478,8 @@ class BaseQuery(orm.Query):
         if page == 1 and len(items) < per_page:
             total = len(items)
         else:
-            total = self.order_by(None).count()
+            if total is None:
+                total = self.order_by(None).count()
 
         return Pagination(self, page, per_page, total, items)
 
